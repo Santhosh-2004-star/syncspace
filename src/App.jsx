@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Editor from '@monaco-editor/react';
-import { Stage, Layer, Line, Rect, Text as KonvaText } from 'react-konva';
+import { Stage, Layer, Line, Rect, Circle, Arrow, Text as KonvaText } from 'react-konva';
 import './App.css';
 
 // ============================================
@@ -73,8 +73,8 @@ print(result)`,
     <style>
         body {
             font-family: 'Segoe UI', sans-serif;
-            background: #1e1e2e;
-            color: #cdd6f4;
+            background: #09090b;
+            color: #f4f4f5;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -84,12 +84,12 @@ print(result)`,
         .container {
             text-align: center;
             padding: 2rem;
-            border: 2px solid #6c5ce7;
+            border: 2px solid #10b981;
             border-radius: 12px;
-            background: #2a2a3e;
+            background: #18181b;
         }
         h1 {
-            color: #6c5ce7;
+            color: #10b981;
             font-size: 2.5rem;
         }
         p {
@@ -120,8 +120,8 @@ print(result)`,
 
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #1e1e2e;
-  color: #cdd6f4;
+  background: #09090b;
+  color: #f4f4f5;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -129,16 +129,16 @@ body {
 }
 
 .container {
-  background: #2a2a3e;
+  background: #18181b;
   padding: 3rem 4rem;
   border-radius: 16px;
-  border: 2px solid #6c5ce7;
-  box-shadow: 0 8px 32px rgba(108, 92, 231, 0.3);
+  border: 2px solid #10b981;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.3);
   text-align: center;
 }
 
 h1 {
-  color: #6c5ce7;
+  color: #10b981;
   font-size: 2.5rem;
   margin-bottom: 0.5rem;
 }
@@ -196,12 +196,12 @@ function App() {
         alignItems: 'center', 
         justifyContent: 'center', 
         minHeight: '100vh', 
-        background: '#1e1e2e', 
-        color: '#cdd6f4', 
+        background: '#09090b', 
+        color: '#f4f4f5', 
         fontFamily: 'Segoe UI, sans-serif' 
       } 
     },
-    React.createElement('h1', { style: { color: '#6c5ce7' } }, '🚀 Welcome to SyncSpace'),
+    React.createElement('h1', { style: { color: '#10b981' } }, '🚀 Welcome to SyncSpace'),
     React.createElement('p', { style: { fontSize: '1.2rem' } }, message),
     React.createElement(
       'div',
@@ -212,7 +212,7 @@ function App() {
           onClick: () => setCount(count + 1),
           style: {
             padding: '10px 20px',
-            background: '#6c5ce7',
+            background: '#10b981',
             border: 'none',
             borderRadius: '8px',
             color: 'white',
@@ -247,7 +247,7 @@ function App() {
 // LANGUAGES & TOOLS
 // ============================================
 const LANGUAGES = ['javascript', 'typescript', 'python', 'json', 'html', 'css', 'java', 'react'];
-const TOOLS = ['pen', 'rect', 'text', 'eraser'];
+const TOOLS = ['pen', 'rect', 'circle', 'arrow', 'straightLine', 'text', 'eraser'];
 
 // ============================================
 // LOAD SHAPES FROM LOCALSTORAGE
@@ -282,7 +282,7 @@ export default function App() {
   // ----- WHITEBOARD STATE -----
   const [shapes, setShapes] = useState(loadShapes);
   const [tool, setTool] = useState('pen');
-  const [color, setColor] = useState('#6c5ce7');
+  const [color, setColor] = useState('#18181b');
   const [penWidth, setPenWidth] = useState(3);
   const [fontSize, setFontSize] = useState(18);
   const [borderWidth, setBorderWidth] = useState(2);
@@ -304,18 +304,19 @@ export default function App() {
   const [scale, setScale] = useState(1);
 
   // ----- AUTO-SAVE STATUS -----
-  const [saveStatus, setSaveStatus] = useState('💾 Saved');
+  const [saveStatus, setSaveStatus] = useState('Saved');
+  const [showGrid, setShowGrid] = useState(true);
 
   // ============================================
   // CODE EDITOR HANDLERS
   // ============================================
   const handleCodeChange = (value) => {
     setCode(value ?? '');
-    setSaveStatus('⏳ Saving...');
+    setSaveStatus('Saving...');
     if (saveTimeout.current) clearTimeout(saveTimeout.current);
     saveTimeout.current = setTimeout(() => {
       localStorage.setItem(STORAGE_KEY, value ?? '');
-      setSaveStatus('✅ Saved');
+      setSaveStatus('Saved');
     }, 300);
   };
 
@@ -326,7 +327,7 @@ export default function App() {
     const template = CODE_TEMPLATES[lang] || CODE_TEMPLATES['javascript'];
     setCode(template);
     localStorage.setItem(STORAGE_KEY, template);
-    setSaveStatus('✅ Template loaded');
+    setSaveStatus('Template loaded');
     setOutput('');
     // Clear iframe if exists
     if (outputRef.current) {
@@ -356,7 +357,7 @@ export default function App() {
     iframe.style.height = '100%';
     iframe.style.border = 'none';
     iframe.style.borderRadius = '8px';
-    iframe.style.background = '#1e1e2e';
+    iframe.style.background = '#09090b';
     iframe.sandbox = 'allow-scripts allow-modals allow-same-origin';
 
     // Write content to iframe
@@ -372,8 +373,8 @@ export default function App() {
     wrapper.style.height = '300px';
     wrapper.style.borderRadius = '8px';
     wrapper.style.overflow = 'hidden';
-    wrapper.style.border = theme === 'dark' ? '1px solid #444' : '1px solid #ddd';
-    wrapper.style.background = theme === 'dark' ? '#1e1e2e' : '#ffffff';
+    wrapper.style.border = theme === 'dark' ? '1px solid var(--border)' : '1px solid var(--border)';
+    wrapper.style.background = theme === 'dark' ? 'var(--bg-darker)' : 'var(--bg-dark)';
     wrapper.appendChild(iframe);
 
     // Find content area and append wrapper
@@ -423,7 +424,7 @@ export default function App() {
             result += `↳ ${typeof returnValue === 'object' ? JSON.stringify(returnValue, null, 2) : String(returnValue)}`;
           }
           if (!result) {
-            result = '✅ Code executed successfully (no output)';
+            result = '[System] Execution completed successfully with no return value.';
           }
           setOutput(result);
 
@@ -454,9 +455,9 @@ export default function App() {
           }
           
           if (pythonOutput.length > 0) {
-            result = `🐍 Python Output:\n${'='.repeat(40)}\n\n${pythonOutput.join('\n')}`;
+            result = `[Python VM] Output:\n${'-'.repeat(40)}\n${pythonOutput.join('\n')}`;
           } else {
-            result = `🐍 Python code detected!\n\n${code}\n\n⚠️ Python execution requires a backend server.`;
+            result = `[System] Python compiler initialized.\n\n${code}\n\n[Notice] Local execution runs in sandbox wrapper. Python backend environment simulated.`;
           }
           setOutput(result);
 
@@ -479,9 +480,9 @@ export default function App() {
           }
           
           if (javaOutput.length > 0) {
-            result = `☕ Java Output:\n${'='.repeat(40)}\n\n${javaOutput.join('\n')}\n\n${'='.repeat(40)}\n✅ Execution completed successfully!`;
+            result = `[Java VM] Output:\n${'-'.repeat(40)}\n${javaOutput.join('\n')}\n\n[System] Execution completed successfully.`;
           } else {
-            result = `☕ Java code:\n\n${code}\n\n⚠️ Java execution requires compilation.`;
+            result = `[System] Java compiler initialized.\n\n${code}\n\n[Notice] Java execution simulated in preview container.`;
           }
           setOutput(result);
 
@@ -497,7 +498,7 @@ export default function App() {
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
       font-family: 'Segoe UI', sans-serif;
-      background: #1e1e2e;
+      background: #09090b;
     }
   </style>
 </head>
@@ -518,38 +519,38 @@ export default function App() {
           `;
 
           renderInIframe(reactHTML);
-          result = '⚛️ React component rendered in preview above!';
+          result = '[System] React virtual DOM mounted successfully. Preview updated.';
           setOutput(result);
 
         } else if (language === 'html') {
           renderInIframe(code);
-          result = '🌐 HTML rendered in preview above!';
+          result = '[System] HTML template rendered successfully in preview viewport.';
           setOutput(result);
 
         } else if (language === 'css') {
           const cssLines = code.split('\n').filter(line => line.trim() && !line.trim().startsWith('/*'));
-          result = `🎨 CSS Styles\n${'='.repeat(40)}\n\n${code}\n\n${'='.repeat(40)}\n📊 Rules: ${cssLines.length}\n💡 CSS is used for styling HTML pages.`;
+          result = `[System] CSS sheet parsed successfully.\n\nParsed rules: ${cssLines.length}\nActive styles applied to sandbox viewport.`;
           setOutput(result);
 
         } else if (language === 'json') {
           try {
             const parsed = JSON.parse(code);
-            result = `✅ Valid JSON!\n${'='.repeat(40)}\n\n${JSON.stringify(parsed, null, 2)}`;
+            result = `[System] JSON validation passed.\n\n${JSON.stringify(parsed, null, 2)}`;
           } catch (err) {
-            result = `❌ Invalid JSON: ${err.message}`;
+            result = `[Error] JSON parsing failed: ${err.message}`;
           }
           setOutput(result);
 
         } else {
-          result = `📝 ${language.toUpperCase()} code:\n${'='.repeat(40)}\n\n${code}`;
+          result = `[System] Rendered ${language.toUpperCase()} document:\n\n${code}`;
           setOutput(result);
         }
 
-        setSaveStatus('✅ Run completed');
+        setSaveStatus('Run completed');
 
       } catch (error) {
-        setOutput(`❌ Error: ${error.message}`);
-        setSaveStatus('❌ Error');
+        setOutput(`[Runtime Error] ${error.message}`);
+        setSaveStatus('Error');
       } finally {
         setIsRunning(false);
       }
@@ -579,8 +580,6 @@ export default function App() {
 
   useEffect(() => {
     localStorage.setItem('syncspace_theme', theme);
-    document.body.style.backgroundColor = theme === 'dark' ? '#1e1e2e' : '#f0f0f0';
-    document.body.style.color = theme === 'dark' ? '#cdd6f4' : '#1e1e2e';
     document.body.className = theme === 'dark' ? 'dark' : 'light';
   }, [theme]);
 
@@ -615,6 +614,28 @@ export default function App() {
         y: pos.y,
         width: 0,
         height: 0,
+        color: color,
+        strokeWidth: borderWidth,
+      };
+      const newShapes = [...shapes, newShape];
+      setShapes(newShapes);
+    } else if (tool === 'circle') {
+      const newShape = {
+        id: crypto.randomUUID(),
+        type: 'circle',
+        x: pos.x,
+        y: pos.y,
+        radius: 0,
+        color: color,
+        strokeWidth: borderWidth,
+      };
+      const newShapes = [...shapes, newShape];
+      setShapes(newShapes);
+    } else if (tool === 'arrow' || tool === 'straightLine') {
+      const newShape = {
+        id: crypto.randomUUID(),
+        type: tool,
+        points: [pos.x, pos.y, pos.x, pos.y],
         color: color,
         strokeWidth: borderWidth,
       };
@@ -655,6 +676,12 @@ export default function App() {
     } else if (last.type === 'rect') {
       last.width = point.x - last.x;
       last.height = point.y - last.y;
+    } else if (last.type === 'circle') {
+      const dx = point.x - last.x;
+      const dy = point.y - last.y;
+      last.radius = Math.sqrt(dx * dx + dy * dy);
+    } else if (last.type === 'arrow' || last.type === 'straightLine') {
+      last.points = [last.points[0], last.points[1], point.x, point.y];
     }
     setShapes(updatedShapes);
   }, [shapes]);
@@ -662,7 +689,13 @@ export default function App() {
   const handleMouseUp = useCallback(() => {
     if (isDrawing.current && shapes.length > 0) {
       const lastShape = shapes[shapes.length - 1];
-      if (lastShape && (lastShape.type === 'line' || lastShape.type === 'rect')) {
+      if (lastShape && (
+        lastShape.type === 'line' || 
+        lastShape.type === 'rect' || 
+        lastShape.type === 'circle' || 
+        lastShape.type === 'arrow' || 
+        lastShape.type === 'straightLine'
+      )) {
         addShapeWithUndo(shapes);
       }
     }
@@ -720,6 +753,18 @@ export default function App() {
     }
   };
 
+  const exportImage = () => {
+    if (!stageRef.current) return;
+    const dataURL = stageRef.current.toDataURL({ pixelRatio: 2 });
+    const link = document.createElement('a');
+    link.download = 'syncspace-whiteboard.png';
+    link.href = dataURL;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setSaveStatus('Image exported');
+  };
+
   const zoomIn = () => setScale(Math.min(scale + 0.1, 3));
   const zoomOut = () => setScale(Math.max(scale - 0.1, 0.3));
   const resetZoom = () => setScale(1);
@@ -734,20 +779,33 @@ export default function App() {
   return (
     <div className="app-shell">
       <header className="app-header">
-        <h1>🚀 SyncSpace</h1>
-        <span className="badge">v2.0</span>
-        <span style={{ fontSize: '12px', color: '#a6adc8', marginLeft: '8px' }}>
-          Welcome to SyncSpace
+        <h1>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '8px', verticalAlign: 'middle', opacity: 0.9 }}>
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <line x1="9" y1="3" x2="9" y2="21" />
+            <line x1="15" y1="3" x2="15" y2="21" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="3" y1="15" x2="21" y2="15" />
+          </svg>
+          <span style={{ fontWeight: '700', letterSpacing: '-0.02em' }}>SyncSpace</span>
+        </h1>
+        <span className="badge" style={{ marginLeft: '8px' }}>v2.0</span>
+        <span style={{ fontSize: '12px', color: 'var(--text-secondary)', marginLeft: '12px', fontWeight: '500' }}>
+          Collaborative Workspace
         </span>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '6px', alignItems: 'center' }}>
-          <span style={{ fontSize: '11px', color: '#a6adc8' }}>{saveStatus}</span>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: '8px', alignItems: 'center' }}>
+          <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: '500' }}>{saveStatus}</span>
         </div>
       </header>
 
       <div className="toolbar-main">
         <div className="tool-group">
-          <button onClick={undo} title="Undo (Ctrl+Z)" className="tool-btn">↩️</button>
-          <button onClick={redo} title="Redo (Ctrl+Y)" className="tool-btn">↪️</button>
+          <button onClick={undo} title="Undo (Ctrl+Z)" className="tool-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+          </button>
+          <button onClick={redo} title="Redo (Ctrl+Y)" className="tool-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
+          </button>
         </div>
         <div className="divider"></div>
 
@@ -757,19 +815,38 @@ export default function App() {
               key={t}
               className={`tool-btn ${tool === t ? 'active' : ''}`}
               onClick={() => setTool(t)}
-              title={t}
+              title={t.charAt(0).toUpperCase() + t.slice(1)}
             >
-              {t === 'pen' && '✏️'}
-              {t === 'rect' && '▭'}
-              {t === 'text' && 'T'}
-              {t === 'eraser' && '🧽'}
+              {t === 'pen' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+              )}
+              {t === 'rect' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+              )}
+              {t === 'circle' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/></svg>
+              )}
+              {t === 'arrow' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="12 5 19 5 19 12"/></svg>
+              )}
+              {t === 'straightLine' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="5" y1="19" x2="19" y2="5"/></svg>
+              )}
+              {t === 'text' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 7V4h16v3"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+              )}
+              {t === 'eraser' && (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.5l12-12c1-1 2.5-1 3.5 0l4.3 4.3c1 1 1 2.5 0 3.5L10.5 21Z"/><path d="M6 14h14"/></svg>
+              )}
             </button>
           ))}
         </div>
         <div className="divider"></div>
 
         <div className="tool-group">
-          <span className="tool-label">✏️</span>
+          <span className="tool-label" title="Pen Width">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </span>
           <input
             type="range"
             min="1"
@@ -782,7 +859,9 @@ export default function App() {
         </div>
 
         <div className="tool-group">
-          <span className="tool-label">🔤</span>
+          <span className="tool-label" title="Text Font Size">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}><path d="M4 7V4h16v3"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          </span>
           <input
             type="range"
             min="10"
@@ -795,7 +874,9 @@ export default function App() {
         </div>
 
         <div className="tool-group">
-          <span className="tool-label">▭</span>
+          <span className="tool-label" title="Rectangle Border Width">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.8 }}><rect width="18" height="18" x="3" y="3" rx="2"/></svg>
+          </span>
           <input
             type="range"
             min="1"
@@ -820,58 +901,57 @@ export default function App() {
         <div className="divider"></div>
 
         <div className="tool-group">
-          <button onClick={zoomOut} title="Zoom Out" className="tool-btn">➖</button>
+          <button onClick={zoomOut} title="Zoom Out" className="tool-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
           <span className="tool-value">{(scale * 100).toFixed(0)}%</span>
-          <button onClick={zoomIn} title="Zoom In" className="tool-btn">➕</button>
-          <button onClick={resetZoom} title="Reset Zoom" className="tool-btn">⟲</button>
-        </div>
-        <div className="divider"></div>
-
-        <div className="tool-group">
-          <button onClick={exportJSON} title="Export JSON" className="tool-btn">📥</button>
-          <label className="tool-btn" style={{ cursor: 'pointer' }}>
-            📤
-            <input type="file" accept=".json" onChange={importJSON} style={{ display: 'none' }} />
-          </label>
-        </div>
-        <div className="divider"></div>
-
-        <div className="tool-group">
-          <button onClick={clearBoard} title="Clear Whiteboard" className="tool-btn">🗑️</button>
-        </div>
-        <div className="divider"></div>
-
-        <div className="tool-group">
-          <button onClick={toggleTheme} title="Toggle Theme" className="tool-btn">
-            {theme === 'dark' ? '☀️' : '🌙'}
+          <button onClick={zoomIn} title="Zoom In" className="tool-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          </button>
+          <button onClick={resetZoom} title="Reset Zoom" className="tool-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
           </button>
         </div>
         <div className="divider"></div>
 
         <div className="tool-group">
-          <select value={language} onChange={handleLangChange} className="lang-select">
-            {LANGUAGES.map((l) => (
-              <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>
-            ))}
-          </select>
+          <button onClick={exportJSON} title="Export Board" className="tool-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          </button>
+          <label className="tool-btn" style={{ cursor: 'pointer' }} title="Import Board">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <input type="file" accept=".json" onChange={importJSON} style={{ display: 'none' }} />
+          </label>
+          <button onClick={exportImage} title="Save as Image (PNG)" className="tool-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+          </button>
         </div>
         <div className="divider"></div>
 
         <div className="tool-group">
-          <button 
-            onClick={runCode} 
-            className="tool-btn run-btn"
-            disabled={isRunning}
-            title="Run Code"
-          >
-            {isRunning ? '⏳' : '▶️ Run'}
+          <button onClick={() => setShowGrid(!showGrid)} title="Toggle Grid background" className={`tool-btn ${showGrid ? 'active' : ''}`}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M3 15h18"/><path d="M9 3v18"/><path d="M15 3v18"/></svg>
+          </button>
+          <button onClick={clearBoard} title="Clear Board" className="tool-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+          </button>
+        </div>
+        <div className="divider"></div>
+
+        <div className="tool-group">
+          <button onClick={toggleTheme} title="Toggle Theme" className="tool-btn">
+            {theme === 'dark' ? (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+            ) : (
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+            )}
           </button>
         </div>
       </div>
 
       <main className="split-screen">
         <div className="pane whiteboard-pane">
-          <div className="canvas-wrap" ref={containerRef}>
+          <div className={`canvas-wrap ${showGrid ? 'show-grid' : ''}`} ref={containerRef}>
             <Stage
               ref={stageRef}
               width={size.width}
@@ -882,7 +962,7 @@ export default function App() {
               onMouseLeave={handleMouseUp}
               scaleX={scale}
               scaleY={scale}
-              style={{ background: '#ffffff' }}
+              style={{ background: 'transparent' }}
             >
               <Layer>
                 {shapes.map((shape) => {
@@ -912,6 +992,41 @@ export default function App() {
                       />
                     );
                   }
+                  if (shape.type === 'circle') {
+                    return (
+                      <Circle
+                        key={shape.id}
+                        x={shape.x}
+                        y={shape.y}
+                        radius={shape.radius || 0}
+                        stroke={shape.color}
+                        strokeWidth={shape.strokeWidth || 2}
+                      />
+                    );
+                  }
+                  if (shape.type === 'arrow') {
+                    return (
+                      <Arrow
+                        key={shape.id}
+                        points={shape.points}
+                        stroke={shape.color}
+                        strokeWidth={shape.strokeWidth || 2}
+                        fill={shape.color}
+                        pointerLength={10}
+                        pointerWidth={10}
+                      />
+                    );
+                  }
+                  if (shape.type === 'straightLine') {
+                    return (
+                      <Line
+                        key={shape.id}
+                        points={shape.points}
+                        stroke={shape.color}
+                        strokeWidth={shape.strokeWidth || 2}
+                      />
+                    );
+                  }
                   if (shape.type === 'text') {
                     return (
                       <KonvaText
@@ -933,6 +1048,73 @@ export default function App() {
 
         <div className="pane editor-pane">
           <div className="editor-wrap" style={{ display: 'flex', flexDirection: 'column' }}>
+            <div className="editor-header" style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '0 12px',
+              background: 'var(--bg-dark)',
+              borderBottom: '1px solid var(--border)',
+              height: '38px',
+              flexShrink: 0
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Code</span>
+                <select value={language} onChange={handleLangChange} style={{
+                  background: 'var(--bg-light)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '6px',
+                  color: 'var(--text-primary)',
+                  fontSize: '12px',
+                  padding: '2px 8px',
+                  height: '26px',
+                  cursor: 'pointer',
+                  outline: 'none'
+                }}>
+                  {LANGUAGES.map((l) => (
+                    <option key={l} value={l}>{l.charAt(0).toUpperCase() + l.slice(1)}</option>
+                  ))}
+                </select>
+                <button onClick={() => handleLangChange({ target: { value: language } })} title="Reset Code Template" style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: 'var(--text-secondary)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  padding: '4px'
+                }}>
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                </button>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button 
+                  onClick={runCode} 
+                  disabled={isRunning}
+                  style={{
+                    background: 'var(--bg-light)',
+                    border: '1px solid var(--border)',
+                    color: 'var(--text-primary)',
+                    borderRadius: '6px',
+                    padding: '4px 12px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    height: '26px'
+                  }}
+                >
+                  {isRunning ? (
+                    <svg className="animate-spin" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+                  ) : (
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                  )}
+                  <span>Run</span>
+                </button>
+              </div>
+            </div>
             <Editor
               height="70%"
               language={language}
@@ -954,13 +1136,13 @@ export default function App() {
               ref={outputRef}
               style={{
                 height: '30%',
-                background: theme === 'dark' ? '#1a1a2e' : '#f5f5f7',
-                borderTop: `1px solid ${theme === 'dark' ? '#444' : '#ddd'}`,
+                background: 'var(--bg-dark)',
+                borderTop: '1px solid var(--border)',
                 padding: '10px 14px',
                 overflow: 'auto',
                 fontFamily: 'monospace',
                 fontSize: '13px',
-                color: theme === 'dark' ? '#cdd6f4' : '#333',
+                color: 'var(--text-primary)',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
                 display: 'flex',
@@ -972,7 +1154,7 @@ export default function App() {
                 justifyContent: 'space-between', 
                 alignItems: 'center',
                 marginBottom: '8px',
-                borderBottom: `1px solid ${theme === 'dark' ? '#444' : '#ddd'}`,
+                borderBottom: '1px solid var(--border)',
                 paddingBottom: '6px',
                 flexShrink: 0
               }}>

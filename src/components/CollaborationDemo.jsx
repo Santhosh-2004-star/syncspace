@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from 'react';
 // This is a simplified demo - actual Yjs integration requires more setup
 export default function CollaborationDemo() {
   const [users, setUsers] = useState([
-    { id: 1, name: 'User A', color: '#6c5ce7', status: 'online' },
-    { id: 2, name: 'User B', color: '#00b894', status: 'online' },
-    { id: 3, name: 'User C', color: '#fdcb6e', status: 'away' },
+    { id: 1, name: 'User A', color: 'var(--primary)', status: 'online' },
+    { id: 2, name: 'User B', color: 'var(--text-secondary)', status: 'online' },
+    { id: 3, name: 'User C', color: 'var(--text-secondary)', status: 'away' },
   ]);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -67,7 +67,7 @@ export default function CollaborationDemo() {
           width: '12px',
           height: '12px',
           borderRadius: '50%',
-          background: isConnected ? '#00b894' : '#e17055',
+          background: isConnected ? '#22c55e' : '#71717a',
           animation: isConnected ? 'pulse 1.5s infinite' : 'none'
         }}></span>
         <strong>{isConnected ? '🟢 Connected' : '🔴 Disconnected'}</strong>
@@ -89,7 +89,7 @@ export default function CollaborationDemo() {
               width: '10px',
               height: '10px',
               borderRadius: '50%',
-              background: user.status === 'online' ? '#00b894' : '#fdcb6e'
+              background: user.status === 'online' ? '#22c55e' : '#eab308'
             }}></span>
             <span style={{ color: user.color }}>{user.name}</span>
           </span>
@@ -113,14 +113,14 @@ export default function CollaborationDemo() {
             <div key={msg.id} style={{
               marginBottom: '6px',
               padding: '4px 8px',
-              background: msg.user === 'You' ? '#6c5ce7' : '#e0e0e0',
-              color: msg.user === 'You' ? '#fff' : '#333',
-              borderRadius: '4px',
+              background: msg.user === 'You' ? 'var(--bg-light)' : 'var(--bg-hover)',
+              color: 'var(--text-primary)',
+              borderRadius: '6px',
               display: 'flex',
               justifyContent: 'space-between'
             }}>
               <span><strong>{msg.user}:</strong> {msg.text}</span>
-              <span style={{ fontSize: '10px', opacity: 0.7 }}>{msg.time}</span>
+              <span style={{ fontSize: '10px', opacity: 0.6, color: 'var(--text-secondary)' }}>{msg.time}</span>
             </div>
           ))
         )}
