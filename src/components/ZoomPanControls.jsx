@@ -78,7 +78,7 @@ export default function ZoomPanControls() {
         <div style={{
           transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
           transition: isDragging ? 'none' : 'all 0.3s ease',
-          background: '#6c5ce7',
+          background: '#10b981',
           color: '#fff',
           padding: '20px',
           borderRadius: '8px',

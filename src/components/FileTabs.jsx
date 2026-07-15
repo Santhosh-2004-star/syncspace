@@ -44,8 +44,8 @@ export default function FileTabs() {
             onClick={() => setActiveFileId(file.id)}
             style={{
               padding: '6px 12px',
-              background: activeFileId === file.id ? '#6c5ce7' : '#eee',
-              color: activeFileId === file.id ? '#fff' : '#333',
+              background: activeFileId === file.id ? 'var(--primary)' : 'var(--bg-light)',
+              color: activeFileId === file.id ? 'var(--active-btn-text)' : 'var(--text-secondary)',
               border: 'none',
               borderRadius: '4px',
               cursor: 'pointer',
